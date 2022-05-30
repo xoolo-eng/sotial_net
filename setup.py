@@ -40,7 +40,7 @@ setup(
     install_requires=get_packages(),
     python_require=">=3.9",
     zip_sefe=True,
-    entry_points={"console_scripts": ["snet = snet.app:run"]},
+    entry_points={"console_scripts": ["s_net = snet.app:run"]},
     classifiers=[
         "Development Status :: 3 - Alpha"
         if "dev" in get_version()
