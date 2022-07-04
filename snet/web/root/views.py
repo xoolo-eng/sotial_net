@@ -17,24 +17,22 @@ class ModelSerialize(json.JSONEncoder):
 
 class ModelDeserialize(json.JSONDecoder):
     def __init__(self, *args, **kwargs):
+        self.model = kwargs["model"]
+        del kwargs["model"]
         super().__init__(*args, object_hook=self.object_hook, **kwargs)
 
-    @staticmethod
-    def object_hook(obj):
+    # @staticmethod
+    def object_hook(self, obj):
+        print(self.model)
         result = {}
         for key, value in obj.items():
-            err = False
             try:
-                result[key] = parser.parse(value)
+                int(value)
             except ValueError:
-                err = True
-            else:
-                err = False
-
-            if err:
-                result[key] = value
-            if key == "password":
-                result[key] = value
+                try:
+                    result[key] = parser.parse(value)
+                except ValueError:
+                    result[key] = value
         return result
 
 
@@ -42,8 +40,10 @@ class SerializeView(web.View):
     _serializer = ModelSerialize(indent=4)
 
     @staticmethod
-    def deserialize(val):
-        return json.loads(val, cls=ModelDeserialize)
+    def deserialize(model):
+        def _f(val):
+            return json.loads(val, cls=ModelDeserialize, model=model)
+        return _f
 
     def serialize(self, data: Dict | List) -> str:
         return self._serializer.encode(data)

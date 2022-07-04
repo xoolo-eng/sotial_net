@@ -18,16 +18,16 @@ def create_app():
     register_tortoise(app, config=settings.DATABASE, generate_schemas=True)
     Crypto.load_key(settings.BASE_DIR.parent / "private_key.pem")
     app.cleanup_ctx.extend([UserCleaner(settings.TASKS_INTERVAL)])
-    # aiohttp_jinja2.setup(
-    #     app,
-    #     loader=jinja2.FileSystemLoader(
-    #         [
-    #             path / "templates"
-    #             for path in (settings.BASE_DIR / "web").iterdir()
-    #             if path.is_dir() and (path / "templates").exists()
-    #         ]
-    #     ),
-    # )
+    aiohttp_jinja2.setup(
+        app,
+        loader=jinja2.FileSystemLoader(
+            [
+                path / "templates"
+                for path in (settings.BASE_DIR / "web").iterdir()
+                if path.is_dir() and (path / "templates").exists()
+            ]
+        ),
+    )
     controller_setup(app, "snet.web.root.urls", cors=True)
     return app
 

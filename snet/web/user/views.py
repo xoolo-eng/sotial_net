@@ -9,6 +9,7 @@ from snet.web.user.models import User, AnonymousUser
 from snet.app.utils import MemCache, Log
 from snet.conf import settings
 from snet.app.permissions import SimplePermission, AnonymousPermission, AnyPermission, TokenType
+from functools import partial
 
 
 # class TokenType(str, enum.Enum):
@@ -107,7 +108,7 @@ class UserView(SerializeView, Log):
 
     @AnonymousPermission.sub_permission
     async def post(self):
-        data = await self.request.json(loads=self.deserialize)
+        data = await self.request.json(loads=self.deserialize(User))
         self.log.critical(data)
         new_user = await User.create(**data)
         new_user = dict(new_user)
